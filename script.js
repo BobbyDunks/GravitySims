@@ -136,7 +136,7 @@ function animate() {
     for (i; i< planetDeck.length; i++){
         planetDeck[i].update();
     };
-	//character.update();
+	//character.update();s
     blackHole.update();
     console.log(planetDeck);
 
