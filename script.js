@@ -116,8 +116,8 @@ function init() {
 function animate() {
 	requestAnimationFrame(animate);
 
-	c.clearRect(0, 0, canvas.width, canvas.height);
-
+	//c.clearRect(0, 0, canvas.width, canvas.height);
+    //commit test
 	character.update();
     blackHole.update();
 
