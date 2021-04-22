@@ -2,7 +2,7 @@
 var canvas = document.querySelector('canvas');
 var c = canvas.getContext('2d');
 canvas.width = innerWidth;
-canvas.height = innerHeight;
+canvas.height = innerHeight-20;
 
 //style canvas
 
@@ -95,24 +95,6 @@ var character;
 var blackHole;
 function init() {
 
-	//planet
-    var radi = randomIntFromRange(8, 20);
-    var x = canvas.width/2
-    var y = 100
-    var dx = 1.6
-
-    var dy = 0
-    /*
-    character = new Ball(
-        x, 
-        y, 
-        dx, 
-        dy, 
-        10, 
-        'green',
-        'black',
-        false);
-    */
     //black hole
     blackHole = new Ball(
         canvas.width/2, 
@@ -136,9 +118,11 @@ function animate() {
     for (i; i< planetDeck.length; i++){
         planetDeck[i].update();
     };
-	//character.update();s
+    console.log('hello');
     blackHole.update();
-    console.log(planetDeck);
+
+    //console.log(document.querySelector('#angle').value);
+    
 
 }
 
