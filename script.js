@@ -4,8 +4,6 @@ var c = canvas.getContext('2d');
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
-//current planet params
-
 //style canvas
 
 var mousex = 100;
@@ -76,7 +74,18 @@ addEventListener("mousemove", function(event){
 
 addEventListener("keydown", function(e){
     if (e.keyCode === 32){
-        planetDeck.push('hello');
+        planetDeck.push(
+            new Ball(
+                x = canvas.width/2, 
+                y = 100, 
+                dx = 1.6, 
+                dy = 0,
+                radius = 10, 
+                color = 'green', 
+                outline = 'black',
+                fixed = false
+                )
+        );
 
     };
 })
@@ -93,6 +102,7 @@ function init() {
     var dx = 1.6
 
     var dy = 0
+    /*
     character = new Ball(
         x, 
         y, 
@@ -102,7 +112,7 @@ function init() {
         'green',
         'black',
         false);
-
+    */
     //black hole
     blackHole = new Ball(
         canvas.width/2, 
@@ -120,8 +130,13 @@ function init() {
 function animate() {
 	requestAnimationFrame(animate);
 
-	//c.clearRect(0, 0, canvas.width, canvas.height);
-	character.update();
+	c.clearRect(0, 0, canvas.width, canvas.height);
+    // planet update loop
+    var i = 0;
+    for (i; i< planetDeck.length; i++){
+        planetDeck[i].update();
+    };
+	//character.update();
     blackHole.update();
     console.log(planetDeck);
 
