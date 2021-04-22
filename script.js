@@ -4,6 +4,8 @@ var c = canvas.getContext('2d');
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
+//current planet params
+
 //style canvas
 
 var mousex = 100;
@@ -27,7 +29,7 @@ function pathFinder(x1,y1,x2,y2, topSpeed){
     };
 }
 
-function Ball(x, y, dx, dy, radius, color, outline, fixed) {
+function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black', fixed = false) {
 	this.x = x;
 	this.y = y;
 	this.dx = dx;
@@ -45,7 +47,6 @@ function Ball(x, y, dx, dy, radius, color, outline, fixed) {
 
         if(fixed == false){
             var gravityMod = gravity/(path.pathDistance/10)**2;
-            console.log(path.pathDistance);
             if (path.pathDistance > this.radius){
                 this.dx += gravityMod*path.pathDirectionX;
                 this.dy += gravityMod*path.pathDirectionY;
@@ -67,15 +68,20 @@ function Ball(x, y, dx, dy, radius, color, outline, fixed) {
 	};
 }
 
-//listener
+//listeners
 addEventListener("mousemove", function(event){
     mousex = event.clientX;
     mousey = event.clientY;
 })
 
+addEventListener("keydown", function(e){
+    if (e.keyCode === 32){
+        planetDeck.push('hello');
 
+    };
+})
 
-
+var planetDeck = [];
 var character;
 var blackHole;
 function init() {
@@ -108,8 +114,6 @@ function init() {
         'white', 
         true);
 
-    console.log(character);
-    console.log(blackHole);
 }
 
 // Animation Loop
@@ -117,9 +121,9 @@ function animate() {
 	requestAnimationFrame(animate);
 
 	//c.clearRect(0, 0, canvas.width, canvas.height);
-    //commit test
 	character.update();
     blackHole.update();
+    console.log(planetDeck);
 
 }
 
