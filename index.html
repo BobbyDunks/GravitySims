@@ -10,10 +10,17 @@
     </style>
 </head>
 <body>
-    <input id = 'angle' type = 'text'/>
-<div id = "game">
+    <div id = "controls">
+        <label for= 'angle'>Angle: </label>
+        <input id = 'angle' type = 'number'/>
+        <label for= 'velocity'>Velocity: </label>
+        <input id = 'velocity' type = 'number'/>
+        <button onclick ="Spawn()">Spawn Planet</button>
+    </div>
+    
     <div id = "ball"></div>
-</div>
-</body>
+
+
+</body> 
 <script src = "script.js"></script>
 </html>

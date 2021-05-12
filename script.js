@@ -15,7 +15,40 @@ function randomIntFromRange(min,max) {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
+function AngleTranslator(angle){
+    /*
+    Takes a bearing value and returns
+    corresponding x and y vector components
+    */
+    var Quadrant = 1;
+    while (angle > 90){
+        angle -= 90;
+        Quadrant += 1;
+    };
+
+    var angleRadians = angle*Math.PI/180;
+    var x = Math.sin(angleRadians);
+    var y = Math.cos(angleRadians);
+
+    if(Quadrant % 2 != 0){
+        return{
+            x: x,
+            y: y
+        };
+    }else{
+        return{
+            x: x,
+            y: y
+        };
+    }
+};
+
 function pathFinder(x1,y1,x2,y2, topSpeed){
+    /*
+    Takes two points on the canvas and returns a 
+    set of variables describing the connecting vector.
+    X, Y and the distance in pixels. 
+    */
     deltax = x1-x2;
     deltay = y1-y2;
     distance = Math.sqrt(deltax**2 + deltay**2);
@@ -28,6 +61,12 @@ function pathFinder(x1,y1,x2,y2, topSpeed){
 }
 
 function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black', fixed = false) {
+    /*
+    Creates an empty object called ball.
+    object is constantly updates to
+    be directed to the centre of the canvas.
+
+    */
 	this.x = x;
 	this.y = y;
 	this.dx = dx;
@@ -66,29 +105,38 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black', fix
 	};
 }
 
+function Spawn(startX = canvas.width/2,startY = 100) {
+    //spawns a ball.
+
+    var inputAngle = document.getElementById('angle').value;
+    // start here, angle isnt working, giving same output irrelevant of input for some reason,
+    initialDirectionVector = AngleTranslator(inputAngle); 
+    console.log(initialDirectionVector.x + ', ' + initialDirectionVector.y)
+    planetDeck.push(
+        new Ball(
+            x = startX, 
+            y = startY, 
+            dx = initialDirectionVector.x*10, 
+            dy = initialDirectionVector.y*10,
+            radius = 10, 
+            color = 'green', 
+            outline = 'black',
+            fixed = false
+            )
+    );
+   
+}
+
 //listeners
 addEventListener("mousemove", function(event){
     mousex = event.clientX;
     mousey = event.clientY;
 })
 
-addEventListener("keydown", function(e){
-    if (e.keyCode === 32){
-        planetDeck.push(
-            new Ball(
-                x = canvas.width/2, 
-                y = 100, 
-                dx = 1.6, 
-                dy = 0,
-                radius = 10, 
-                color = 'green', 
-                outline = 'black',
-                fixed = false
-                )
-        );
-
-    };
-})
+addEventListener('mousedown', function(event){
+    Spawn(mousex, mousey)
+}
+);
 
 var planetDeck = [];
 var character;
@@ -118,12 +166,10 @@ function animate() {
     for (i; i< planetDeck.length; i++){
         planetDeck[i].update();
     };
-    console.log('hello');
     blackHole.update();
 
-    //console.log(document.querySelector('#angle').value);
     
-
+    
 }
 
 init();
