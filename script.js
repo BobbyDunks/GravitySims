@@ -8,7 +8,6 @@ canvas.height = innerHeight;
 
 var mousex = 100;
 var mousey = 98;
-
 var gravity = 10;
 
 function randomIntFromRange(min,max) {
@@ -77,7 +76,7 @@ function pathFinder(x1,y1,x2,y2, topSpeed){
     };
 }
 
-function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black', fixed = false) {
+function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black') {
     /*
     Creates an empty object called ball.
     object is constantly updates to
@@ -92,22 +91,29 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black', fix
 	this.color = color;
 
 	this.update = function() {
-        var path = pathFinder(
-            this.x,
-            this.y,
-            canvas.width/2,
-            canvas.height/2, 
-            5);
+        /*attracted to centre sceen
+            -if other planets exist, attract to location of that planet
+            -if not, do nothing.
+        */
+        if(planetDeck.length > 30){
+            var path = pathFinder(
+                this.x,
+                this.y,
+                canvas.width/2,
+                canvas.height/2, 
+                5);
 
-        if(fixed == false){
+
             var gravityMod = gravity/(path.pathDistance/10)**2;
             if (path.pathDistance > this.radius){
                 this.dx += gravityMod*path.pathDirectionX;
                 this.dy += gravityMod*path.pathDirectionY;
             }
-                this.x += this.dx;
-                this.y += this.dy;
         }
+        //otherwise, continue as normal.
+            this.x += this.dx;
+            this.y += this.dy;
+        
         this.draw();
 	};
 
@@ -158,19 +164,7 @@ addEventListener('mousedown', function(event){
 
 var planetDeck = [];
 var character;
-var blackHole;
 function init() {
-
-    //black hole
-    blackHole = new Ball(
-        canvas.width/2, 
-        canvas.height/2, 
-        0, 
-        0, 
-        20, 
-        'black',
-        'white', 
-        true);
 
 }
 
@@ -178,13 +172,12 @@ function init() {
 function animate() {
 	requestAnimationFrame(animate);
 
-	c.clearRect(0, 0, canvas.width, canvas.height);
+    c.clearRect(0, 0, canvas.width, canvas.height);
     // planet update loop
     var i = 0;
     for (i; i< planetDeck.length; i++){
         planetDeck[i].update();
     };
-    blackHole.update();
 
     
     
