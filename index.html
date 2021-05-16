@@ -1,4 +1,35 @@
-<canvas></canvas>
+<html>
+ <body>
+     <div style="position:relative;width:800px;height:800px">
+        <canvas width=100% height=100%></canvas>
+        <label for= 'angle' style="
+        position:absolute;
+        left:10px;
+        top:5px;
+        width:600px;
+        color: blanchedalmond; " 
+        >Angle: </label>
+        <input id = 'angle' type = 'number' style="
+        position:absolute;
+        left:10px;
+        top:20px;
+        width:600px"/>
+
+        <label for= 'velSlide' style="
+        position:absolute;
+        left: 10px;
+        top: 55px;
+        color: blanchedalmond;"
+        > Velocity: </label>
+        <input id = 'velSlide' type="range" min="0" max="100" value="50" style="
+        position:absolute;
+        left:10px;
+        top:75px;
+        width:600px"/>
+        <div id = "ball"></div>
+     </div>
+<body>
+
 <head>
     <meta charset = "UTF-8">
     <title>Gravity</title>
@@ -9,18 +40,6 @@
         }
     </style>
 </head>
-<body>
-    <div id = "controls">
-        <label for= 'angle'>Angle: </label>
-        <input id = 'angle' type = 'number'/>
-        <label for= 'velocity'>Velocity: </label>
-        <input id = 'velocity' type = 'number'/>
-        <button onclick ="Spawn()">Spawn Planet</button>
-    </div>
-    
-    <div id = "ball"></div>
 
-
-</body> 
 <script src = "script.js"></script>
 </html>

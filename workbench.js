@@ -1,4 +1,8 @@
 function AngleTranslator(angle){
+    /*
+    Takes a bearing value and returns
+    corresponding x and y vector components
+    */
     var Quadrant = 1;
     while (angle > 90){
         angle -= 90;
@@ -9,18 +13,41 @@ function AngleTranslator(angle){
     var x = Math.sin(angleRadians);
     var y = Math.cos(angleRadians);
 
-    if(Quadrant % 2 != 0){
+    if(Quadrant == 1){
         return{
-            xDirection: Math.floor(x*100),
-            yDirection: Math.floor(y*100)
+            x: x,
+            y: y
         };
-    }else{
+    };
+    
+    if(Quadrant ==  2){
         return{
-            xDirection: Math.floor(y*100),
-            yDirection: Math.floor(x*100)
+            x: y,
+            y: -x
         };
+    };
+
+    if(Quadrant == 3){
+        return{
+            x: -x,
+            y: -y
+        }
     }
+
+    if(Quadrant == 4){
+        return{
+            x: -y,
+            y: x
+        }
+    }
+
 };
-
-
-console.log(AngleTranslator(30));
+var vector = AngleTranslator(315);
+//START HERE, Incorporate negatives, angles are all coming out in bottom right quadrant, whats with that?
+/*
+Q1, ++
+Q2, +-
+Q3, --
+Q4, -+
+*/
+console.log(vector.x + ', ' + vector.y);

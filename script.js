@@ -2,7 +2,7 @@
 var canvas = document.querySelector('canvas');
 var c = canvas.getContext('2d');
 canvas.width = innerWidth;
-canvas.height = innerHeight-20;
+canvas.height = innerHeight;
 
 //style canvas
 
@@ -30,17 +30,34 @@ function AngleTranslator(angle){
     var x = Math.sin(angleRadians);
     var y = Math.cos(angleRadians);
 
-    if(Quadrant % 2 != 0){
+    if(Quadrant == 1){
         return{
             x: x,
             y: y
         };
-    }else{
+    };
+    
+    if(Quadrant ==  2){
         return{
-            x: x,
-            y: y
+            x: y,
+            y: -x
         };
+    };
+
+    if(Quadrant == 3){
+        return{
+            x: -x,
+            y: -y
+        }
     }
+
+    if(Quadrant == 4){
+        return{
+            x: -y,
+            y: x
+        }
+    }
+
 };
 
 function pathFinder(x1,y1,x2,y2, topSpeed){
@@ -109,15 +126,15 @@ function Spawn(startX = canvas.width/2,startY = 100) {
     //spawns a ball.
 
     var inputAngle = document.getElementById('angle').value;
-    // start here, angle isnt working, giving same output irrelevant of input for some reason,
-    initialDirectionVector = AngleTranslator(inputAngle); 
+    var initialDirectionVector = AngleTranslator(inputAngle); 
+    
     console.log(initialDirectionVector.x + ', ' + initialDirectionVector.y)
     planetDeck.push(
         new Ball(
             x = startX, 
             y = startY, 
             dx = initialDirectionVector.x*10, 
-            dy = initialDirectionVector.y*10,
+            dy = -(initialDirectionVector.y*10),
             radius = 10, 
             color = 'green', 
             outline = 'black',
