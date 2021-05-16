@@ -126,6 +126,7 @@ function Spawn(startX = canvas.width/2,startY = 100) {
     //spawns a ball.
 
     var inputAngle = document.getElementById('angle').value;
+    var initialVel = (document.getElementById('velSlide').value)/5;
     var initialDirectionVector = AngleTranslator(inputAngle); 
     
     console.log(initialDirectionVector.x + ', ' + initialDirectionVector.y)
@@ -133,8 +134,8 @@ function Spawn(startX = canvas.width/2,startY = 100) {
         new Ball(
             x = startX, 
             y = startY, 
-            dx = initialDirectionVector.x*10, 
-            dy = -(initialDirectionVector.y*10),
+            dx = initialDirectionVector.x*initialVel, 
+            dy = -(initialDirectionVector.y*initialVel),
             radius = 10, 
             color = 'green', 
             outline = 'black',
