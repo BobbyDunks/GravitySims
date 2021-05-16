@@ -1,53 +1,29 @@
-function AngleTranslator(angle){
+function pathFinder(x1,y1,x2,y2, topSpeed){
     /*
-    Takes a bearing value and returns
-    corresponding x and y vector components
+    Takes two points on the canvas and returns a 
+    set of variables describing the connecting vector.
+    X, Y and the distance in pixels. 
     */
-    var Quadrant = 1;
-    while (angle > 90){
-        angle -= 90;
-        Quadrant += 1;
-    };
-
-    var angleRadians = angle*Math.PI/180;
-    var x = Math.sin(angleRadians);
-    var y = Math.cos(angleRadians);
-
-    if(Quadrant == 1){
-        return{
-            x: x,
-            y: y
-        };
-    };
+    deltax = x1-x2;
+    deltay = y1-y2;
+    distance = Math.sqrt(deltax**2 + deltay**2);
+    speedModifier = Math.sqrt((topSpeed**2)/((deltax**2)+(deltay**2)));
     
-    if(Quadrant ==  2){
-        return{
-            x: y,
-            y: -x
+    if ( deltax == NaN || deltay == NaN){
+        //if the path is to the current location, return a 0 vector
+        return {
+            pathDirectionX: 0,
+            pathDirectionY: 0,
+            pathDistance: 0
         };
-    };
 
-    if(Quadrant == 3){
-        return{
-            x: -x,
-            y: -y
-        }
+    }else{
+        return {
+            pathDirectionX: -(speedModifier * deltax),
+            pathDirectionY: -(speedModifier * deltay),
+            pathDistance: distance
+        };
     }
-
-    if(Quadrant == 4){
-        return{
-            x: -y,
-            y: x
-        }
-    }
-
-};
-var vector = AngleTranslator(315);
-//START HERE, Incorporate negatives, angles are all coming out in bottom right quadrant, whats with that?
-/*
-Q1, ++
-Q2, +-
-Q3, --
-Q4, -+
-*/
-console.log(vector.x + ', ' + vector.y);
+}
+var path = pathFinder(10,5,10,5, 5)
+console.log(path.pathDirectionX, path.pathDirectionY)

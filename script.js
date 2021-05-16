@@ -69,11 +69,22 @@ function pathFinder(x1,y1,x2,y2, topSpeed){
     deltay = y1-y2;
     distance = Math.sqrt(deltax**2 + deltay**2);
     speedModifier = Math.sqrt((topSpeed**2)/((deltax**2)+(deltay**2)));
-    return {
-        pathDirectionX: -(speedModifier * deltax),
-        pathDirectionY: -(speedModifier * deltay),
-        pathDistance: distance
-    };
+    
+    if ( deltax == NaN || deltay == NaN){
+        //if the path is to the current location, return a 0 vector
+        return {
+            pathDirectionX: 0,
+            pathDirectionY: 0,
+            pathDistance: 0
+        };
+
+    }else{
+        return {
+            pathDirectionX: -(speedModifier * deltax),
+            pathDirectionY: -(speedModifier * deltay),
+            pathDistance: distance
+        };
+    }
 }
 
 function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black') {
@@ -95,12 +106,17 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black') {
             -if other planets exist, attract to location of that planet
             -if not, do nothing.
         */
-        if(planetDeck.length > 30){
+        if(planetDeck.length > 1){
+            /*
+            - iterate through planet deck
+            - aquire the vectors for all planets that arent this planet
+            - vector for this planet will come back as NaN, could just output zero
+            */
             var path = pathFinder(
                 this.x,
                 this.y,
-                canvas.width/2,
-                canvas.height/2, 
+                planetDeck[0].x,
+                planetDeck[0].y, 
                 5);
 
 
@@ -135,7 +151,6 @@ function Spawn(startX = canvas.width/2,startY = 100) {
     var initialVel = (document.getElementById('velSlide').value)/5;
     var initialDirectionVector = AngleTranslator(inputAngle); 
     
-    console.log(initialDirectionVector.x + ', ' + initialDirectionVector.y)
     planetDeck.push(
         new Ball(
             x = startX, 
@@ -157,10 +172,12 @@ addEventListener("mousemove", function(event){
     mousey = event.clientY;
 })
 
-addEventListener('mousedown', function(event){
-    Spawn(mousex, mousey)
-}
-);
+addEventListener("keydown", function(e){
+    if (e.keyCode === 83){
+        Spawn(mousex,mousey);
+
+    };
+})
 
 var planetDeck = [];
 var character;
