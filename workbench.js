@@ -28,10 +28,7 @@ function pathFinder(x1,y1,x2,y2, topSpeed){
             pathDistance: distance
         };
     }
-}
-//start here, get working vector and unit vector functions
-//Once that is done, move on to vector addition loop in planet.update
-
+};
 function vectorFinder(x1,y1,x2,y2){
     /*
     Takes two points on the canvas and returns a 
@@ -48,12 +45,10 @@ function vectorFinder(x1,y1,x2,y2){
         return [deltax,deltay];
     };
 };
-
 function Mag(vector){
     //returns magnitude of a 2d vector
     return Math.sqrt(Math.pow(vector[0],2)+Math.pow(vector[1],2))
 };
-
 function unitVector(vector){
     var returner = []
     var mag = Mag(vector)
@@ -63,10 +58,17 @@ function unitVector(vector){
     return returner
 };
 
+function vectorSum(vectorList){
+    var xSum = 0;
+    var ySum = 0;
+    for(var i = 0; i < vectorList.length; i++){
+        xSum += vectorList[i][0];
+        ySum += vectorList[i][1];
+    }
+    return [xSum,ySum]
+};
 
 
-
-
-var unitV = unitVector([3,5]);
-console.log(unitV)
-console.log(Mag(unitV));
+var vecList = [[14,7],[-6,1]];
+var masterVec = vectorSum(vecList);
+console.log(masterVec);

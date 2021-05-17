@@ -8,7 +8,7 @@ canvas.height = innerHeight;
 
 var mousex = 100;
 var mousey = 98;
-var gravity = 1000;
+var gravity = 1000s;
 var planetDeck = [];
 var character;
 
@@ -120,6 +120,17 @@ function unitVector(vector){
     return returner
 };
 
+function vectorSum(vectorList){
+    var xSum = 0;
+    var ySum = 0;
+    for(var i = 0; i < vectorList.length; i++){
+        xSum += vectorList[i][0];
+        ySum += vectorList[i][1];
+    }
+    return [xSum,ySum]
+};
+
+
 
 function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black') {
     /*
@@ -140,30 +151,38 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black') {
             -if other planets exist, attract to location of that planet
             -if not, do nothing.
         */
-        if(planetDeck.length > 1){
+        var vectorDeck = [];
+        for(var i = 0; i<planetDeck.length;i++){
             /*
-            - iterate through planet deck
-            - aquire the vectors for all planets that arent this planet
-            - vector for this planet will come back as NaN, could just output zero
+            - for loop iterates through planet deck
+            - aquires the vectors for all planets that arent this planet
             */
             var pathVector = vectorFinder(
                 this.x,
                 this.y,
-                planetDeck[0].x,
-                planetDeck[0].y, 
+                planetDeck[i].x,
+                planetDeck[i].y, 
                 );
 
-            var pathMag = Mag(pathVector);
-            var pathUnitVector = unitVector(pathVector);
-
-
-            var gravityMod = -gravity/(pathMag)**2;
-
-            if (pathMag > this.radius){
-                this.dx += gravityMod*pathUnitVector[0];
-                this.dy += gravityMod*pathUnitVector[1];
-            }
+            vectorDeck.push(pathVector);
         }
+        //vectorDeck now holds all relevant vectors.
+        // below will be computed on the master vector
+        var masterVec = vectorSum(vectorDeck);
+        var masterMag = Mag(masterVec);
+        var masterUnitVec = unitVector(masterVec);
+
+        var gravityMod = -gravity/(masterMag)**2;
+
+        if (masterMag > this.radius){
+            // START HERE
+            // master vector dominated by distance
+            // adding vector components to dx and dy
+            // one at a time might solve this?
+            this.dx += gravityMod*masterUnitVec[0];
+            this.dy += gravityMod*masterUnitVec[1];
+        }
+    
         //otherwise, continue as normal.
             this.x += this.dx;
             this.y += this.dy;
@@ -225,7 +244,7 @@ function init() {
 function animate() {
 	requestAnimationFrame(animate);
 
-    //c.clearRect(0, 0, canvas.width, canvas.height);
+    c.clearRect(0, 0, canvas.width, canvas.height);
     // planet update loop
     var i = 0;
     for (i; i< planetDeck.length; i++){
