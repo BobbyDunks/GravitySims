@@ -61,9 +61,9 @@ function AngleTranslator(angle){
 
 function pathFinder(x1,y1,x2,y2, topSpeed){
     /*
-    Takes two points on the canvas and returns a 
-    set of variables describing the connecting vector.
-    X, Y and the distance in pixels. 
+    Takes two points on the canvas and returns the distance between
+    the points as well as the unit vector direction from point A to B
+    
     */
     deltax = x1-x2;
     deltay = y1-y2;
