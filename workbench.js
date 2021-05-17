@@ -32,7 +32,7 @@ function pathFinder(x1,y1,x2,y2, topSpeed){
 //start here, get working vector and unit vector functions
 //Once that is done, move on to vector addition loop in planet.update
 
-function vectorFinder(x1,y1,x2,y2, topSpeed){
+function vectorFinder(x1,y1,x2,y2){
     /*
     Takes two points on the canvas and returns a 
     set of variables describing the connecting vector. 

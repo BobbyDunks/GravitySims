@@ -8,7 +8,9 @@ canvas.height = innerHeight;
 
 var mousex = 100;
 var mousey = 98;
-var gravity = 10;
+var gravity = 1000;
+var planetDeck = [];
+var character;
 
 function randomIntFromRange(min,max) {
 	return Math.floor(Math.random() * (max - min + 1) + min);
@@ -85,7 +87,39 @@ function pathFinder(x1,y1,x2,y2, topSpeed){
             pathDistance: distance
         };
     }
-}
+};
+
+function vectorFinder(x1,y1,x2,y2){
+    /*
+    Takes two points on the canvas and returns a 
+    set of variables describing the connecting vector. 
+    */
+    deltax = x1-x2;
+    deltay = y1-y2;;
+
+    if ( deltax == NaN || deltay == NaN){
+        //if the path is to the current location, return a 0 vector
+        return [0,0]
+
+    }else{
+        return [deltax,deltay];
+    };
+};
+
+function Mag(vector){
+    //returns magnitude of a 2d vector
+    return Math.sqrt(Math.pow(vector[0],2)+Math.pow(vector[1],2))
+};
+
+function unitVector(vector){
+    var returner = []
+    var mag = Mag(vector)
+    for(var i =0 ; i < 2; i++){
+        returner.push(vector[i]/mag)
+    };
+    return returner
+};
+
 
 function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black') {
     /*
@@ -112,18 +146,22 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black') {
             - aquire the vectors for all planets that arent this planet
             - vector for this planet will come back as NaN, could just output zero
             */
-            var path = pathFinder(
+            var pathVector = vectorFinder(
                 this.x,
                 this.y,
                 planetDeck[0].x,
                 planetDeck[0].y, 
-                5);
+                );
+
+            var pathMag = Mag(pathVector);
+            var pathUnitVector = unitVector(pathVector);
 
 
-            var gravityMod = gravity/(path.pathDistance/10)**2;
-            if (path.pathDistance > this.radius){
-                this.dx += gravityMod*path.pathDirectionX;
-                this.dy += gravityMod*path.pathDirectionY;
+            var gravityMod = -gravity/(pathMag)**2;
+
+            if (pathMag > this.radius){
+                this.dx += gravityMod*pathUnitVector[0];
+                this.dy += gravityMod*pathUnitVector[1];
             }
         }
         //otherwise, continue as normal.
@@ -179,8 +217,6 @@ addEventListener("keydown", function(e){
     };
 })
 
-var planetDeck = [];
-var character;
 function init() {
 
 }
@@ -189,7 +225,7 @@ function init() {
 function animate() {
 	requestAnimationFrame(animate);
 
-    c.clearRect(0, 0, canvas.width, canvas.height);
+    //c.clearRect(0, 0, canvas.width, canvas.height);
     // planet update loop
     var i = 0;
     for (i; i< planetDeck.length; i++){
