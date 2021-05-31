@@ -187,20 +187,20 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black') {
                 planetDeck[i].x,
                 planetDeck[i].y, 
                 );
-            // START HERE
-            // pathForceVector is returning NaN
-            // when evaluating itself.
-            // zero vector in unitVector function
-            // returns Nan
-            
-            console.log(pathVector)
+
             var pathMag = Mag(pathVector);
             var pathUnitVec = unitVector(pathVector);
-            console.log('path unit vector: ' + pathUnitVec);
+            if (sameArray(pathUnitVec,[0,0])){
+                // if unit vector is zero, push zero (vector is pointing from current planet to itself)
+                console.log('pushed vector is: '+ pathUnitVec)
+                vectorDeck.push(pathUnitVec);
+            }else{
+                // else multiply my gravity modifier and push.
+                var gravityMod = -gravity/Math.pow(pathMag,2);
+                var pathForceVector = pathUnitVec.map(function(x){return x * gravityMod});
+                vectorDeck.push(pathForceVector);
+            };
             
-            var gravityMod = -gravity/Math.pow(pathMag,2);
-            var pathForceVector = pathUnitVec.map(function(x){return x * gravityMod});
-            vectorDeck.push(pathForceVector);
         }
 
         // vectorDeck now holds all relevant vectors.
