@@ -1,3 +1,13 @@
+// TODO
+// - make tails.
+// - make board clear after a certain amount of time
+// - make mass slider
+// - make mass proportionate to radius
+// - make collision physics
+//   -make collisions reuslt in combined mass.
+// - make collision with walls.
+// - make setup randomiser.
+
 
 var canvas = document.querySelector('canvas');
 var c = canvas.getContext('2d');
@@ -8,7 +18,7 @@ canvas.height = innerHeight;
 
 var mousex = 100;
 var mousey = 98;
-var gravity = 100;
+var gravity = 1;
 var planetDeck = [];
 var character;
 
@@ -151,7 +161,7 @@ function sameArray(vector1,vector2){
 
 
 
-function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black') {
+function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black',) {
     /*
     Creates an empty object called ball.
     object is constantly updates to
@@ -163,6 +173,7 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black') {
 	this.dx = dx;
 	this.dy = dy;
 	this.radius = radius;
+    this.mass = Math.pow(radius,3);
 	this.color = color;
 
 	this.update = function() {
@@ -195,7 +206,9 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black') {
                 vectorDeck.push(pathUnitVec);
             }else{
                 // else multiply my gravity modifier and push.
-                var gravityMod = -gravity/Math.pow(pathMag,2);
+                var gravityMod = (-gravity/Math.pow(pathMag,2));
+                // consider mass of planet
+                var gravityMod = gravityMod * this.mass
                 var pathForceVector = pathUnitVec.map(function(x){return x * gravityMod});
                 vectorDeck.push(pathForceVector);
             };
@@ -208,6 +221,7 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black') {
         var masterVec = vectorSum(vectorDeck)
 
         this.dx += masterVec[0];
+        console.log('change in x: '+ masterVec[0])
         this.dy += masterVec[1];
 
         this.x += this.dx;
@@ -232,6 +246,7 @@ function Spawn(startX = canvas.width/2,startY = 100) {
 
     var inputAngle = document.getElementById('angle').value;
     var initialVel = (document.getElementById('velSlide').value)/5;
+    var inputSize = document.getElementById('massSlide').value
     var initialDirectionVector = AngleTranslator(inputAngle); 
     
     planetDeck.push(
@@ -240,7 +255,7 @@ function Spawn(startX = canvas.width/2,startY = 100) {
             y = startY, 
             dx = initialDirectionVector.x*initialVel, 
             dy = -(initialDirectionVector.y*initialVel),
-            radius = 10, 
+            radius = inputSize, 
             color = 'green', 
             outline = 'black',
             fixed = false
