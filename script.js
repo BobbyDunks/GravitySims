@@ -168,6 +168,10 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black',) {
     be directed to the centre of the canvas.
 
     */
+
+    // START HERE
+    // more mass equals less force, whats with that?
+
 	this.x = x;
 	this.y = y;
 	this.dx = dx;
@@ -175,6 +179,8 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black',) {
 	this.radius = radius;
     this.mass = Math.pow(radius,3);
 	this.color = color;
+
+    console.log('new ball with radius ' + this.radius + ' and mass ' + this.mass)
 
 	this.update = function() {
         /*
@@ -208,7 +214,7 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black',) {
                 // else multiply my gravity modifier and push.
                 var gravityMod = (-gravity/Math.pow(pathMag,2));
                 // consider mass of planet
-                var gravityMod = gravityMod * this.mass
+                var gravityMod = gravityMod * planetDeck[i].mass;
                 var pathForceVector = pathUnitVec.map(function(x){return x * gravityMod});
                 vectorDeck.push(pathForceVector);
             };
