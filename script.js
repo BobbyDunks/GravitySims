@@ -8,7 +8,7 @@ canvas.height = innerHeight;
 
 var mousex = 100;
 var mousey = 98;
-var gravity = 1000;
+var gravity = 100;
 var planetDeck = [];
 var character;
 
@@ -192,7 +192,6 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black') {
             var pathUnitVec = unitVector(pathVector);
             if (sameArray(pathUnitVec,[0,0])){
                 // if unit vector is zero, push zero (vector is pointing from current planet to itself)
-                console.log('pushed vector is: '+ pathUnitVec)
                 vectorDeck.push(pathUnitVec);
             }else{
                 // else multiply my gravity modifier and push.
@@ -206,17 +205,14 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black') {
         // vectorDeck now holds all relevant vectors.
         // do this for every vector below
         // sum all force vectors to make master vector.
-        var masterVec = vectorSum(vectorDeck);
-        var masterMag = Mag(masterVec);
-        if (masterMag > this.radius){
-            this.dx += masterVec[0];
-            this.dy += masterVec[1];
-        }
+        var masterVec = vectorSum(vectorDeck)
+
+        this.dx += masterVec[0];
+        this.dy += masterVec[1];
+
+        this.x += this.dx;
+        this.y += this.dy;
     
-        //otherwise, continue as normal.
-            this.x += this.dx;
-            this.y += this.dy;
-        
         this.draw();
 	};
 
@@ -274,7 +270,7 @@ function init() {
 function animate() {
 	requestAnimationFrame(animate);
 
-    // c.clearRect(0, 0, canvas.width, canvas.height);
+    c.clearRect(0, 0, canvas.width, canvas.height);
     // planet update loop
     var i = 0;
     for (i; i< planetDeck.length; i++){
