@@ -8,7 +8,7 @@ canvas.height = innerHeight;
 
 var mousex = 100;
 var mousey = 98;
-var gravity = 1000s;
+var gravity = 1000;
 var planetDeck = [];
 var character;
 
@@ -97,7 +97,7 @@ function vectorFinder(x1,y1,x2,y2){
     deltax = x1-x2;
     deltay = y1-y2;;
 
-    if ( deltax == NaN || deltay == NaN){
+    if ( deltax == NaN && deltay == NaN){
         //if the path is to the current location, return a 0 vector
         return [0,0]
 
@@ -112,6 +112,11 @@ function Mag(vector){
 };
 
 function unitVector(vector){
+    // returns unit vector
+    // of given vector.
+    if (sameArray(vector, [0,0]) || sameArray(vector, [NaN, NaN])){
+        return [0,0];
+    };
     var returner = []
     var mag = Mag(vector)
     for(var i =0 ; i < 2; i++){
@@ -128,6 +133,20 @@ function vectorSum(vectorList){
         ySum += vectorList[i][1];
     }
     return [xSum,ySum]
+};
+
+function sameArray(vector1,vector2){
+    // returns true if vectors are the same
+    // otherwise returns false
+    if (vector1.length != vector2.length){
+        return false
+    };
+    for (var i = 0 ; i <= vector1.length; i ++){
+        if (vector1[i] != vector2[i]){
+            return false
+        };
+    return true
+    }
 };
 
 
@@ -147,15 +166,20 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black') {
 	this.color = color;
 
 	this.update = function() {
-        /*attracted to centre sceen
+        /*
             -if other planets exist, attract to location of that planet
             -if not, do nothing.
         */
         var vectorDeck = [];
+        console.log('new loop');
         for(var i = 0; i<planetDeck.length;i++){
             /*
             - for loop iterates through planet deck
             - aquires the vectors for all planets that arent this planet
+            - aquires magnitude and unit vector
+            - calculates gravity modifier
+            - multiplies unit vector by gravity modifier
+            - pushes to vector deck.
             */
             var pathVector = vectorFinder(
                 this.x,
@@ -163,24 +187,30 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black') {
                 planetDeck[i].x,
                 planetDeck[i].y, 
                 );
-
-            vectorDeck.push(pathVector);
+            // START HERE
+            // pathForceVector is returning NaN
+            // when evaluating itself.
+            // zero vector in unitVector function
+            // returns Nan
+            
+            console.log(pathVector)
+            var pathMag = Mag(pathVector);
+            var pathUnitVec = unitVector(pathVector);
+            console.log('path unit vector: ' + pathUnitVec);
+            
+            var gravityMod = -gravity/Math.pow(pathMag,2);
+            var pathForceVector = pathUnitVec.map(function(x){return x * gravityMod});
+            vectorDeck.push(pathForceVector);
         }
-        //vectorDeck now holds all relevant vectors.
-        // below will be computed on the master vector
+
+        // vectorDeck now holds all relevant vectors.
+        // do this for every vector below
+        // sum all force vectors to make master vector.
         var masterVec = vectorSum(vectorDeck);
         var masterMag = Mag(masterVec);
-        var masterUnitVec = unitVector(masterVec);
-
-        var gravityMod = -gravity/(masterMag)**2;
-
         if (masterMag > this.radius){
-            // START HERE
-            // master vector dominated by distance
-            // adding vector components to dx and dy
-            // one at a time might solve this?
-            this.dx += gravityMod*masterUnitVec[0];
-            this.dy += gravityMod*masterUnitVec[1];
+            this.dx += masterVec[0];
+            this.dy += masterVec[1];
         }
     
         //otherwise, continue as normal.
@@ -244,7 +274,7 @@ function init() {
 function animate() {
 	requestAnimationFrame(animate);
 
-    c.clearRect(0, 0, canvas.width, canvas.height);
+    // c.clearRect(0, 0, canvas.width, canvas.height);
     // planet update loop
     var i = 0;
     for (i; i< planetDeck.length; i++){
