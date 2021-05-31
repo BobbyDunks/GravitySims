@@ -1,11 +1,9 @@
 // TODO
-// - make tails.
-// - make board clear after a certain amount of time
-// - make mass slider
-// - make mass proportionate to radius
 // - make collision physics
-//   -make collisions reuslt in combined mass.
+//    - make collisions reuslt in combined mass.
 // - make collision with walls.
+//    - OR make screen draggable by repositioning all 
+//      planets when mouse drag.
 // - make setup randomiser.
 
 
@@ -19,6 +17,7 @@ canvas.height = innerHeight;
 var mousex = 100;
 var mousey = 98;
 var gravity = 1;
+var mousedown = false;
 var planetDeck = [];
 var character;
 
@@ -169,9 +168,6 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black',) {
 
     */
 
-    // START HERE
-    // more mass equals less force, whats with that?
-
 	this.x = x;
 	this.y = y;
 	this.dx = dx;
@@ -180,59 +176,59 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black',) {
     this.mass = Math.pow(radius,3);
 	this.color = color;
 
-    console.log('new ball with radius ' + this.radius + ' and mass ' + this.mass)
-
 	this.update = function() {
         /*
             -if other planets exist, attract to location of that planet
             -if not, do nothing.
         */
-        var vectorDeck = [];
-        console.log('new loop');
-        for(var i = 0; i<planetDeck.length;i++){
-            /*
-            - for loop iterates through planet deck
-            - aquires the vectors for all planets that arent this planet
-            - aquires magnitude and unit vector
-            - calculates gravity modifier
-            - multiplies unit vector by gravity modifier
-            - pushes to vector deck.
-            */
-            var pathVector = vectorFinder(
-                this.x,
-                this.y,
-                planetDeck[i].x,
-                planetDeck[i].y, 
-                );
+        if (!(mousedown)){
 
-            var pathMag = Mag(pathVector);
-            var pathUnitVec = unitVector(pathVector);
-            if (sameArray(pathUnitVec,[0,0])){
-                // if unit vector is zero, push zero (vector is pointing from current planet to itself)
-                vectorDeck.push(pathUnitVec);
-            }else{
-                // else multiply my gravity modifier and push.
-                var gravityMod = (-gravity/Math.pow(pathMag,2));
-                // consider mass of planet
-                var gravityMod = gravityMod * planetDeck[i].mass;
-                var pathForceVector = pathUnitVec.map(function(x){return x * gravityMod});
-                vectorDeck.push(pathForceVector);
-            };
-            
+            var vectorDeck = [];
+            for(var i = 0; i<planetDeck.length;i++){
+                /*
+                - for loop iterates through planet deck
+                - aquires the vectors for all planets that arent this planet
+                - aquires magnitude and unit vector
+                - calculates gravity modifier
+                - multiplies unit vector by gravity modifier
+                - pushes to vector deck.
+                */
+                var pathVector = vectorFinder(
+                    this.x,
+                    this.y,
+                    planetDeck[i].x,
+                    planetDeck[i].y, 
+                    );
+
+                var pathMag = Mag(pathVector);
+                var pathUnitVec = unitVector(pathVector);
+                if (sameArray(pathUnitVec,[0,0])){
+                    // if unit vector is zero, push zero (vector is pointing from current planet to itself)
+                    vectorDeck.push(pathUnitVec);
+                }else{
+                    // else multiply my gravity modifier and push.
+                    var gravityMod = (-gravity/Math.pow(pathMag,2));
+                    // consider mass of planet
+                    var gravityMod = gravityMod * planetDeck[i].mass;
+                    var pathForceVector = pathUnitVec.map(function(x){return x * gravityMod});
+                    vectorDeck.push(pathForceVector);
+                };
+                
+            }
+
+            // vectorDeck now holds all relevant vectors.
+            // do this for every vector below
+            // sum all force vectors to make master vector.
+            var masterVec = vectorSum(vectorDeck)
+
+            this.dx += masterVec[0];
+            this.dy += masterVec[1];
+
+            this.x += this.dx;
+            this.y += this.dy;
+        }else{
+            this.x
         }
-
-        // vectorDeck now holds all relevant vectors.
-        // do this for every vector below
-        // sum all force vectors to make master vector.
-        var masterVec = vectorSum(vectorDeck)
-
-        this.dx += masterVec[0];
-        console.log('change in x: '+ masterVec[0])
-        this.dy += masterVec[1];
-
-        this.x += this.dx;
-        this.y += this.dy;
-    
         this.draw();
 	};
 
@@ -279,8 +275,23 @@ addEventListener("mousemove", function(event){
 addEventListener("keydown", function(e){
     if (e.keyCode === 83){
         Spawn(mousex,mousey);
+        // START HERE
+        // need to make a set of vectors for each planet
+        // recording relative position to mouse
+        // for each planet, maintain that vector to the mouse,
+        // will require looping through all planets to make vector
+        // planet.x = mouse.x + locatorx
+        // planet.y = mouse y + locatory
 
     };
+})
+
+addEventListener("mousedown", function(e){
+    mousedown = true;
+});
+
+addEventListener("mouseup", function(e){
+    mousedown = false;
 })
 
 function init() {
@@ -290,7 +301,7 @@ function init() {
 // Animation Loop
 function animate() {
 	requestAnimationFrame(animate);
-
+    console.log(mousedown);
     c.clearRect(0, 0, canvas.width, canvas.height);
     // planet update loop
     var i = 0;
