@@ -20,6 +20,7 @@ var gravity = 1;
 var mousedown = false;
 var planetDeck = [];
 var character;
+var mousePointers = [];
 
 function randomIntFromRange(min,max) {
 	return Math.floor(Math.random() * (max - min + 1) + min);
@@ -227,7 +228,7 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black',) {
             this.x += this.dx;
             this.y += this.dy;
         }else{
-            this.x
+            
         }
         this.draw();
 	};
@@ -258,8 +259,8 @@ function Spawn(startX = canvas.width/2,startY = 100) {
             dx = initialDirectionVector.x*initialVel, 
             dy = -(initialDirectionVector.y*initialVel),
             radius = inputSize, 
-            color = 'green', 
-            outline = 'black',
+            color = 'white', 
+            outline = 'white',
             fixed = false
             )
     );
@@ -288,6 +289,12 @@ addEventListener("keydown", function(e){
 
 addEventListener("mousedown", function(e){
     mousedown = true;
+    mousePointers = [];
+    for (var i = 0; i < planetDeck.length ; i++){
+        mouseVector = vectorFinder(planetDeck[i].x,planetDeck[i].y,mousex,mousey)
+        mousePointers.push([mouseVector])
+    };
+    // mouse pointers appear to check out ?
 });
 
 addEventListener("mouseup", function(e){
@@ -301,17 +308,29 @@ function init() {
 // Animation Loop
 function animate() {
 	requestAnimationFrame(animate);
-    console.log(mousedown);
     c.clearRect(0, 0, canvas.width, canvas.height);
     // planet update loop
     var i = 0;
-    for (i; i< planetDeck.length; i++){
-        planetDeck[i].update();
-    };
+    if (mousedown){
+        // maintain relative position to mouse while mouse is down.
+        // (drag panner)
+        for (var i = 0; i< mousePointers.length; i++){
+            mousePointer = mousePointers[i][0]
+            planetDeck[i].x = mousex + mousePointer[0];
+            planetDeck[i].y = mousey + mousePointer[1];
+            planetDeck[i].update();
+        }
+    }else{
+        for (i; i< planetDeck.length; i++){
+            planetDeck[i].update();
+        };
+    }
+    
 
     
     
 }
+
 
 init();
 animate();
