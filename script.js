@@ -15,8 +15,8 @@ var mousex = 100;
 var mousey = 98;
 var gravity = 0.1;
 var mousedown = false;
-var collision = false;
 var planetDeck = [];
+var planetCounter = 0;
 var character;
 var mousePointers = [];
 
@@ -166,7 +166,7 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black',) {
     be directed to the centre of the canvas.
 
     */
-    this.ID = planetDeck.length
+    this.ID = planetCounter
 	this.x = x;
 	this.y = y;
 	this.dx = dx;
@@ -180,7 +180,7 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black',) {
             -if other planets exist, attract to location of that planet
             -if not, do nothing.
         */
-        if (!(mousedown) && !(collision)){
+        if (!(mousedown)){
 
             var vectorDeck = [];
             for(var i = 0; i<planetDeck.length;i++){
@@ -208,9 +208,15 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black',) {
                     // if magnitue of vector between two unique planets is less than
                     // sum of their radii, then they are colliding.
 
-                    // arithmetic not right, 1+1=11 ahaha
-                    collision = true;
+                    // START HERE
+                    // collision handling.
+                    // 1. delete impacted planet.
+                    //      this is going to fuck up ID generation, need a new system for that.
+                    // 2. add offending planet's mass to impacting planet.
                     console.log('COLLISION!');
+                    planetDeck.splice(i,1);
+                    break;
+                    
                 }
                 var pathUnitVec = unitVector(pathVector);
                 if (sameArray(pathUnitVec,[0,0])){
@@ -240,6 +246,7 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black',) {
         }else{
             
         }
+        
         this.draw();
 	};
 
@@ -262,6 +269,7 @@ function Spawn(startX = canvas.width/2,startY = 100) {
     var inputSize = document.getElementById('massSlide').value
     var initialDirectionVector = AngleTranslator(inputAngle); 
     
+    
     planetDeck.push(
         new Ball(
             x = startX, 
@@ -274,7 +282,7 @@ function Spawn(startX = canvas.width/2,startY = 100) {
             fixed = false
             )
     );
-   
+    planetCounter += 1;
 }
 
 //listeners

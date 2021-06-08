@@ -30,6 +30,11 @@ function sameArray(vector1,vector2){
     return true
     }
 };
-var zeroVec = [0,0];
 
-console.log(1+1);
+// delete an indexed item from a list.
+
+var testDeck = ['apple','pear','orange','banana'];
+
+testDeck.splice(1,2);
+
+console.log(testDeck)
