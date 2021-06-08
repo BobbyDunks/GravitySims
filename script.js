@@ -13,7 +13,7 @@ canvas.height = innerHeight;
 
 var mousex = 100;
 var mousey = 98;
-var gravity = 0.1;
+var gravity = 1;
 var mousedown = false;
 var planetDeck = [];
 var planetCounter = 0;
@@ -205,15 +205,11 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black',) {
                 var pathMag = Mag(pathVector);
                 if (pathMag < (Number(this.radius) + Number(planetDeck[i].radius)) 
                     && (this.ID != planetDeck[i].ID)){
-                    // if magnitue of vector between two unique planets is less than
-                    // sum of their radii, then they are colliding.
 
-                    // START HERE
-                    // collision handling.
-                    // 1. delete impacted planet.
-                    //      this is going to fuck up ID generation, need a new system for that.
-                    // 2. add offending planet's mass to impacting planet.
                     console.log('COLLISION!');
+                    this.mass = Number(this.mass) + Number(planetDeck[i].mass)
+                    this.radius = Math.cbrt(this.mass);
+                    
                     planetDeck.splice(i,1);
                     break;
                     

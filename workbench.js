@@ -37,4 +37,4 @@ var testDeck = ['apple','pear','orange','banana'];
 
 testDeck.splice(1,2);
 
-console.log(testDeck)
+console.log(Math.cbrt(27))
