@@ -13,10 +13,11 @@ canvas.height = innerHeight;
 
 var mousex = 100;
 var mousey = 98;
-var gravity = 1;
+var gravity = 0.5;
 var mousedown = false;
 var planetDeck = [];
 var planetCounter = 0;
+var pause = true;
 var character;
 var mousePointers = [];
 
@@ -180,7 +181,7 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black',) {
             -if other planets exist, attract to location of that planet
             -if not, do nothing.
         */
-        if (!(mousedown)){
+        if (!(mousedown)&&!(pause)){
 
             var vectorDeck = [];
             for(var i = 0; i<planetDeck.length;i++){
@@ -206,11 +207,37 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black',) {
                 if (pathMag < (Number(this.radius) + Number(planetDeck[i].radius)) 
                     && (this.ID != planetDeck[i].ID)){
 
-                    console.log('COLLISION!');
+                    // combine masses
+                   
+                    // calculate resultant direction
+                    // find which is heavier.
+                    var deckMass = Number(planetDeck[i].mass)
+                    var thisMass = Number(this.mass)
+                    var thisDirection = [Number(this.dx),Number(this.dy)]
+                    var deckDirection = [Number(planetDeck[i].dx),Number(planetDeck[i].dy)]
+                    
+                    if (deckMass > thisMass){
+                        // find ratio < 1 of masses, then multiply
+                        // the vector of the smaller mass by that ratio
+                        // to account for conservation of momentum on collision.
+                        // update the colliding body's direction accordingly.
+                        var massMod = thisMass/deckMass
+                        thisDirection = thisDirection.map(function(x){return x * massMod})
+                        this.dx = Number(thisDirection[0])+Number(deckDirection[0])
+                        this.dy = Number(thisDirection[1])+Number(deckDirection[1])
+                    }else{
+                        var massMod = deckMass/thisMass
+                        deckDirection = deckDirection.map(function(x){return x * massMod})
+                        this.dx = Number(thisDirection[0])+Number(deckDirection[0])
+                        this.dy = Number(thisDirection[1])+Number(deckDirection[1])
+                    }
                     this.mass = Number(this.mass) + Number(planetDeck[i].mass)
                     this.radius = Math.cbrt(this.mass);
-                    
+
+
                     planetDeck.splice(i,1);
+
+                
                     break;
                     
                 }
@@ -290,15 +317,22 @@ addEventListener("mousemove", function(event){
 addEventListener("keydown", function(e){
     if (e.keyCode === 83){
         Spawn(mousex,mousey);
-        // START HERE
-        // need to make a set of vectors for each planet
-        // recording relative position to mouse
-        // for each planet, maintain that vector to the mouse,
-        // will require looping through all planets to make vector
-        // planet.x = mouse.x + locatorx
-        // planet.y = mouse y + locatory
-
+        
     };
+
+    
+    if (e.keyCode === 80){
+        console.log(pause)
+        if (pause){
+            pause = false
+        }else{
+            pause = true
+        }
+    };
+})
+
+addEventListener("keydown", function(evnt){
+    
 })
 
 addEventListener("mousedown", function(e){

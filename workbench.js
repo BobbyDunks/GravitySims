@@ -33,8 +33,9 @@ function sameArray(vector1,vector2){
 
 // delete an indexed item from a list.
 
-var testDeck = ['apple','pear','orange','banana'];
+var testDeck = [10,100];
 
-testDeck.splice(1,2);
+testDeck = testDeck.map(function(x){return x/10})
 
-console.log(Math.cbrt(27))
+console.log(testDeck)
+
