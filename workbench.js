@@ -32,4 +32,4 @@ function sameArray(vector1,vector2){
 };
 var zeroVec = [0,0];
 
-console.log(unitVector(zeroVec));
+console.log(1+1);

@@ -1,9 +1,6 @@
 // TODO
 // - make collision physics
 //    - make collisions reuslt in combined mass.
-// - make collision with walls.
-//    - OR make screen draggable by repositioning all 
-//      planets when mouse drag.
 // - make setup randomiser.
 
 
@@ -16,8 +13,9 @@ canvas.height = innerHeight;
 
 var mousex = 100;
 var mousey = 98;
-var gravity = 1;
+var gravity = 0.1;
 var mousedown = false;
+var collision = false;
 var planetDeck = [];
 var character;
 var mousePointers = [];
@@ -168,7 +166,7 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black',) {
     be directed to the centre of the canvas.
 
     */
-
+    this.ID = planetDeck.length
 	this.x = x;
 	this.y = y;
 	this.dx = dx;
@@ -182,7 +180,7 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black',) {
             -if other planets exist, attract to location of that planet
             -if not, do nothing.
         */
-        if (!(mousedown)){
+        if (!(mousedown) && !(collision)){
 
             var vectorDeck = [];
             for(var i = 0; i<planetDeck.length;i++){
@@ -200,14 +198,26 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black',) {
                     planetDeck[i].x,
                     planetDeck[i].y, 
                     );
-
+                // START HERE
+                // check magnitude of vector to each neighbouring planet
+                // if magnitude smaller than combined radii, then collision occurs.
+            
                 var pathMag = Mag(pathVector);
+                if (pathMag < (Number(this.radius) + Number(planetDeck[i].radius)) 
+                    && (this.ID != planetDeck[i].ID)){
+                    // if magnitue of vector between two unique planets is less than
+                    // sum of their radii, then they are colliding.
+
+                    // arithmetic not right, 1+1=11 ahaha
+                    collision = true;
+                    console.log('COLLISION!');
+                }
                 var pathUnitVec = unitVector(pathVector);
                 if (sameArray(pathUnitVec,[0,0])){
                     // if unit vector is zero, push zero (vector is pointing from current planet to itself)
                     vectorDeck.push(pathUnitVec);
                 }else{
-                    // else multiply my gravity modifier and push.
+                    // else multiply by gravity modifier and push.
                     var gravityMod = (-gravity/Math.pow(pathMag,2));
                     // consider mass of planet
                     var gravityMod = gravityMod * planetDeck[i].mass;
