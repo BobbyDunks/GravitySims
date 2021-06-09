@@ -1,7 +1,6 @@
 // TODO
-// - make collision physics
-//    - make collisions reuslt in combined mass.
-// - make setup randomiser.
+// - make randomiser
+// - make size change more apparent.
 
 
 var canvas = document.querySelector('canvas');
@@ -13,11 +12,13 @@ canvas.height = innerHeight;
 
 var mousex = 100;
 var mousey = 98;
-var gravity = 0.5;
+var gravity = (document.getElementById('gravSlide').value)/10;
 var mousedown = false;
 var planetDeck = [];
 var planetCounter = 0;
 var pause = true;
+var trails = false;
+var particleCloud = 700;
 var character;
 var mousePointers = [];
 
@@ -173,7 +174,7 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black',) {
 	this.dx = dx;
 	this.dy = dy;
 	this.radius = radius;
-    this.mass = Math.pow(radius,3);
+    this.mass = Math.pow(radius,2);
 	this.color = color;
 
 	this.update = function() {
@@ -232,7 +233,7 @@ function Ball(x, y, dx, dy, radius = 10, color = 'green', outline = 'black',) {
                         this.dy = Number(thisDirection[1])+Number(deckDirection[1])
                     }
                     this.mass = Number(this.mass) + Number(planetDeck[i].mass)
-                    this.radius = Math.cbrt(this.mass);
+                    this.radius = Math.sqrt(this.mass);
 
 
                     planetDeck.splice(i,1);
@@ -301,12 +302,16 @@ function Spawn(startX = canvas.width/2,startY = 100) {
             dy = -(initialDirectionVector.y*initialVel),
             radius = inputSize, 
             color = 'white', 
-            outline = 'white',
+            outline = 'black',
             fixed = false
             )
     );
     planetCounter += 1;
 }
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+  }
 
 //listeners
 addEventListener("mousemove", function(event){
@@ -319,20 +324,33 @@ addEventListener("keydown", function(e){
         Spawn(mousex,mousey);
         
     };
-
+    if(e.keyCode === 84){
+        if(trails){
+            trails = false;
+        }else{
+            trails = true;
+        }
+    }
     
     if (e.keyCode === 80){
         console.log(pause)
         if (pause){
-            pause = false
+            pause = false;
         }else{
-            pause = true
+            pause = true;
         }
     };
-})
 
-addEventListener("keydown", function(evnt){
-    
+    if (e.keyCode === 82){
+        while (planetDeck.length != 0){
+            planetDeck.pop();
+        }
+        for (var i = 0; i < particleCloud;i++){
+            randomX = getRandomInt(innerWidth);
+            randomY = getRandomInt(innerHeight);
+            Spawn(randomX,randomY)
+        }
+    };
 })
 
 addEventListener("mousedown", function(e){
@@ -356,7 +374,9 @@ function init() {
 // Animation Loop
 function animate() {
 	requestAnimationFrame(animate);
-    c.clearRect(0, 0, canvas.width, canvas.height);
+    if (!trails){
+        c.clearRect(0, 0, canvas.width, canvas.height);
+    };
     // planet update loop
     var i = 0;
     if (mousedown){
